@@ -1,4 +1,4 @@
-package com.example.adminaber.Adapters;
+package com.example.adminaber.Adapters.User;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

@@ -1,4 +1,4 @@
-package com.example.adminaber.Fragments.User.Manager;
+package com.example.adminaber.Fragments.Driver.Chat;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -13,22 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.adminaber.Adapters.User.UserManagerAdapter;
+import com.example.adminaber.Adapters.Driver.DriverChatAdapter;
 import com.example.adminaber.FirebaseManager;
-import com.example.adminaber.Models.User.User;
+import com.example.adminaber.Fragments.ChatDetailFragment;
+import com.example.adminaber.Models.Staff.Driver;
 import com.example.adminaber.R;
 import com.example.adminaber.Utils.AndroidUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class UserManagerListFragment extends Fragment implements UserManagerAdapter.RecyclerViewClickListener{
-    private Map<User, String> userMap;
-    private UserManagerAdapter userAdapter;
+
+public class DriverChatListFragment extends Fragment implements DriverChatAdapter.RecyclerViewClickListener {
+    private DriverChatAdapter adapter;
     private FirebaseManager firebaseManager;
     private ProgressDialog progressDialog;
-    private List<User> userList, filteredList;
+    private List<Driver> driverList, filteredList;
     private SearchView searchView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,35 +36,34 @@ public class UserManagerListFragment extends Fragment implements UserManagerAdap
         progressDialog = new ProgressDialog(requireContext());
         AndroidUtil.showLoadingDialog(progressDialog);
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_user_manager_list, container, false);
+        View root = inflater.inflate(R.layout.fragment_driver_chat_list, container, false);
         firebaseManager = new FirebaseManager();
 
-        firebaseManager.getAllUsers(new FirebaseManager.OnFetchUserListListener<User, String>() {
+        firebaseManager.getAllDrivers(new FirebaseManager.OnFetchDriverListListener() {
             @Override
-            public void onFetchUserListSuccess(Map<User, String> usersData) {
-                userMap = usersData;
-                userList = new ArrayList<>(userMap.keySet());
-                updateUI(userList);
+            public void onFetchDriverListSuccess(List<Driver> list) {
+                driverList = list;
+                updateUI(driverList);
+                AndroidUtil.hideLoadingDialog(progressDialog);
             }
 
             @Override
-            public void onFetchUserListFailure(String message) {
+            public void onFetchDriverListFailure(String message) {
                 AndroidUtil.showToast(requireContext(), message);
                 AndroidUtil.hideLoadingDialog(progressDialog);
             }
         });
 
-        RecyclerView recyclerView = root.findViewById(R.id.recycler_manager_user);
+        RecyclerView recyclerView = root.findViewById(R.id.recycler_chat_driver);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        userAdapter = new UserManagerAdapter(new ArrayList<>(), this);
-        recyclerView.setAdapter(userAdapter);
+        adapter = new DriverChatAdapter(new ArrayList<>(), this);
+        recyclerView.setAdapter(adapter);
 
         searchView = root.findViewById(R.id.search_view);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchView.setIconified(false);
-                handleSearch();
             }
         });
 
@@ -76,7 +75,7 @@ public class UserManagerListFragment extends Fragment implements UserManagerAdap
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                queryUsers(newText);
+
                 return true;
             }
         });
@@ -85,47 +84,25 @@ public class UserManagerListFragment extends Fragment implements UserManagerAdap
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void updateUI(List<User> userList){
-        userAdapter.setUserList(userList);
-        userAdapter.notifyDataSetChanged();
+    private void updateUI(List<Driver> driverList){
+        adapter.setDriverList(driverList);
+        adapter.notifyDataSetChanged();
         AndroidUtil.hideLoadingDialog(progressDialog);
-    }
-
-    private void handleSearch() {
-        String query = searchView.getQuery().toString();
-        queryUsers(query);
-    }
-    private void queryUsers(String query) {
-        filteredList = new ArrayList<>();
-        if (userList != null) {
-            for (User user : userList) {
-                if (user.getName().toLowerCase().contains(query.toLowerCase())) {
-                    filteredList.add(user);
-                } else if (user.getEmail().toLowerCase().contains(query.toLowerCase())){
-                    filteredList.add(user);
-                }
-            }
-        }
-
-        updateUI(filteredList);
     }
 
     @Override
     public void onCardClick(int position) {
-        String id;
-        if (filteredList == null || filteredList.isEmpty() || position >= filteredList.size()){
-            id = userMap.get(userList.get(position));
-        } else {
-            id = userMap.get(filteredList.get(position));
-        }
+        String id = driverList.get(position).getDocumentID();
+
         if(id != null){
-            UserDetailFragment fragment = new UserDetailFragment();
+            ChatDetailFragment fragment = new ChatDetailFragment();
             Bundle bundle = new Bundle();
+            bundle.putString("type", "driver");
             bundle.putString("userID", id);
             fragment.setArguments(bundle);
 
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_user_manager_container, fragment)
+                    .replace(R.id.fragment_driver_chat_container, fragment)
                     .addToBackStack(null)
                     .commit();
         }

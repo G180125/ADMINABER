@@ -12,12 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.adminaber.Adapters.UserChatAdapter;
+import com.example.adminaber.Adapters.User.UserChatAdapter;
 import com.example.adminaber.FirebaseManager;
+import com.example.adminaber.Fragments.ChatDetailFragment;
 import com.example.adminaber.Models.User.User;
 import com.example.adminaber.R;
+import com.example.adminaber.Utils.AndroidUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,8 @@ public class UserChatListFragment extends Fragment implements UserChatAdapter.Re
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        showLoadingDialog();
+        progressDialog = new ProgressDialog(requireContext());
+        AndroidUtil.showLoadingDialog(progressDialog);
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_user_chat_list, container, false);
         firebaseManager = new FirebaseManager();
@@ -45,13 +47,13 @@ public class UserChatListFragment extends Fragment implements UserChatAdapter.Re
                 userMap = usersData;
                 userList = new ArrayList<>(userMap.keySet());
                 updateUI(userList);
-                hideLoadingDialog();
+                AndroidUtil.hideLoadingDialog(progressDialog);
             }
 
             @Override
             public void onFetchUserListFailure(String message) {
-                showToast(message);
-                hideLoadingDialog();
+                AndroidUtil.showToast(requireContext(), message);
+                AndroidUtil.hideLoadingDialog(progressDialog);
             }
         });
 
@@ -89,7 +91,7 @@ public class UserChatListFragment extends Fragment implements UserChatAdapter.Re
     private void updateUI(List<User> userList){
         userAdapter.setUserList(userList);
         userAdapter.notifyDataSetChanged();
-        hideLoadingDialog();
+        AndroidUtil.hideLoadingDialog(progressDialog);
     }
 
     private void handleSearch() {
@@ -111,27 +113,6 @@ public class UserChatListFragment extends Fragment implements UserChatAdapter.Re
         updateUI(filteredList);
     }
 
-    private void showLoadingDialog() {
-        requireActivity().runOnUiThread(() -> {
-            progressDialog = new ProgressDialog(requireContext());
-            progressDialog.setMessage("Loading...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        });
-    }
-
-    private void hideLoadingDialog() {
-        requireActivity().runOnUiThread(() -> {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-        });
-    }
-
-    private void showToast(String message){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onCardClick(int position) {
         String id;
@@ -141,13 +122,14 @@ public class UserChatListFragment extends Fragment implements UserChatAdapter.Re
             id = userMap.get(filteredList.get(position));
         }
         if(id != null){
-            UserChatDetailFragment fragment = new UserChatDetailFragment();
+            ChatDetailFragment fragment = new ChatDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putString("userID", id);
+            bundle.putString("type", "user");
             fragment.setArguments(bundle);
 
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_main_chat_container, fragment)
+                    .replace(R.id.fragment_user_chat_container, fragment)
                     .addToBackStack(null)
                     .commit();
         }

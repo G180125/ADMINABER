@@ -1,4 +1,4 @@
-package com.example.adminaber.Fragments.User.Chat;
+package com.example.adminaber.Fragments.Home.Pending;
 
 import android.os.Bundle;
 
@@ -10,17 +10,17 @@ import android.view.ViewGroup;
 
 import com.example.adminaber.R;
 
-public class UserChatFragment extends Fragment {
-
+public class HomePendingFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_user_chat, container, false);
-        UserChatListFragment fragment = new UserChatListFragment();
+        View root = inflater.inflate(R.layout.fragment_home_pending, container, false);
 
-        getParentFragmentManager().beginTransaction()
-                .add(R.id.fragment_user_chat_container, fragment)
+        PendingListFragment fragment = new PendingListFragment();
+
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_pending_container, fragment)
                 .addToBackStack(null)
                 .commit();
 

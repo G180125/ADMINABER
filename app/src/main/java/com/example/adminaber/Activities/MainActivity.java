@@ -69,8 +69,11 @@ public class MainActivity extends AppCompatActivity {
     private void replaceFragment(Fragment fragment, FragmentManager fragmentManager, FragmentTransaction fragmentTransaction) {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-        fragmentTransaction.replace(R.id.fragment_main_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        if (!fragmentManager.isStateSaved()) {
+            fragmentTransaction.replace(R.id.fragment_main_container, fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
     }
+
 }

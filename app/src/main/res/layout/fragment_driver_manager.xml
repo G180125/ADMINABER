@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.User.Chat.UserChatFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.Driver.Manager.DriverManagerFragment">
 
     <FrameLayout
-        android:id="@+id/fragment_user_chat_container"
+        android:id="@+id/fragment_driver_manager_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" />
-
 </FrameLayout>

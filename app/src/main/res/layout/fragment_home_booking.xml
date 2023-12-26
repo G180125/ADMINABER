@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.User.Chat.UserChatFragment">
+    tools:context=".Fragments.Home.Booking.HomeBookingFragment">
 
-    <FrameLayout
-        android:id="@+id/fragment_user_chat_container"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:gravity="center_horizontal|center_vertical"
+        android:text="booking"/>
 
 </FrameLayout>
