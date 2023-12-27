@@ -46,6 +46,8 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserVi
         if(user.getAvatar().isEmpty()){
             holder.bind(user, position, null);
             return;
+        } else {
+            holder.bind(user, position, null);
         }
         firebaseManager.retrieveImage(user.getAvatar(), new FirebaseManager.OnRetrieveImageListener() {
             @Override

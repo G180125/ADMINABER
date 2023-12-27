@@ -107,8 +107,8 @@ public class UserDetailFragment extends Fragment {
         emailTextView.setText(user.getEmail());
         setGenderFromRadiusButton(user);
         phoneTextView.setText(user.getPhoneNumber());
-        addressTextView.setText(user.getHome().getAddress());
-        plateTextView.setText(user.getVehicle().getNumberPlate());
+        addressTextView.setText(user.getHomes().get(0).getAddress());
+        plateTextView.setText(user.getVehicles().get(0).getNumberPlate());
         if(!user.getEmergencyContacts().isEmpty()){
             sosTextView.setText(user.getEmergencyContacts().get(0).getName());
         }
