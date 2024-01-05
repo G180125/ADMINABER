@@ -39,6 +39,7 @@ public class MainUserFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager2.setCurrentItem(tab.getPosition());
+                ;
             }
 
             @Override
