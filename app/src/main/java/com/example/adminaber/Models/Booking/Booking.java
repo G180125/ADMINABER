@@ -1,39 +1,71 @@
 package com.example.adminaber.Models.Booking;
 
+import com.example.adminaber.Models.User.Home;
+import com.example.adminaber.Models.User.SOS;
+import com.example.adminaber.Models.User.Vehicle;
+
 public class Booking {
-    private String pickUp;
-    private String destination;
+    private String id;
+    private PickUp pickUp;
+    private Home destination;
     private String ETA;
     private String bookingTime;
-    private String realPickUpTime;
-    private String pickUpImage;
+    private String bookingDate;
     private Payment payment;
+    private Vehicle vehicle;
+    private SOS emergencyContact;
+    private String status;
+    private String userID;
+    private String driverID;
 
     public Booking(){}
 
-    public Booking(String pickUp, String destination, String ETA, String bookingTime, String realPickUpTime, String pickUpImage, Payment payment) {
+    public Booking(PickUp pickUp, Home destination, String ETA, String bookingTime, Payment payment, SOS emergencyContact, Vehicle vehicle, String user, String bookingDate) {
+        this.id = generateID();
         this.pickUp = pickUp;
         this.destination = destination;
         this.ETA = ETA;
         this.bookingTime = bookingTime;
-        this.realPickUpTime = realPickUpTime;
-        this.pickUpImage = pickUpImage;
         this.payment = payment;
+        this.vehicle = vehicle;
+        this.emergencyContact = emergencyContact;
+        this.status = "Pending";
+        this.userID = user;
+        this.driverID = "";
+        this.bookingDate = bookingDate;
     }
 
-    public String getPickUp() {
+    private String generateID() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        int length = 16;
+
+        StringBuilder idBuilder = new StringBuilder();
+
+        while (idBuilder.length() < length) {
+            int index = (int) (Math.random() * characters.length());
+            char randomChar = characters.charAt(index);
+
+            idBuilder.append(randomChar);
+        }
+
+        return idBuilder.toString();
+    }
+
+    public String getId(){return this.id;}
+    public PickUp getPickUp() {
         return pickUp;
     }
 
-    public void setPickUp(String pickUp) {
+    public void setPickUp(PickUp pickUp) {
         this.pickUp = pickUp;
     }
 
-    public String getDestination() {
+    public Home getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Home destination) {
         this.destination = destination;
     }
 
@@ -53,20 +85,20 @@ public class Booking {
         this.bookingTime = bookingTime;
     }
 
-    public String getRealPickUpTime() {
-        return realPickUpTime;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setRealPickUpTime(String realPickUpTime) {
-        this.realPickUpTime = realPickUpTime;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
-    public String getPickUpImage() {
-        return pickUpImage;
+    public SOS getEmergencyContact() {
+        return emergencyContact;
     }
 
-    public void setPickUpImage(String pickUpImage) {
-        this.pickUpImage = pickUpImage;
+    public void setEmergencyContact(SOS emergencyContact) {
+        this.emergencyContact = emergencyContact;
     }
 
     public Payment getPayment() {
@@ -75,5 +107,37 @@ public class Booking {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUser() {
+        return userID;
+    }
+
+    public void setUser(String user) {
+        this.userID = user;
+    }
+
+    public String getDriver() {
+        return driverID;
+    }
+
+    public void setDriver(String driver) {
+        this.driverID = driver;
+    }
+
+    public String getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(String bookingDate) {
+        this.bookingDate = bookingDate;
     }
 }

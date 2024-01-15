@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="Require New Avatar"
                 android:textStyle="bold"
-                android:textColor="@color/warning_red"
+                android:textColor="@color/red"
                 android:textSize="18sp" />
             <TextView
                 android:id="@+id/email"

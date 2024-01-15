@@ -64,7 +64,6 @@ public class DriverDetailFragment extends Fragment {
 
         backImageView = root.findViewById(R.id.back);
         avatar = root.findViewById(R.id.avatar);
-        activeImageView = root.findViewById(R.id.active);
         statusTextView = root.findViewById(R.id.status);
         nameTextView = root.findViewById(R.id.name);
         emailTextView = root.findViewById(R.id.email);
@@ -98,6 +97,7 @@ public class DriverDetailFragment extends Fragment {
             public void onClick(View v) {
                 AndroidUtil.showLoadingDialog(progressDialog);
                 driver.setPermission(true);
+                driver.setStatus("OK");
                 firebaseManager.updateDriver(driver, new FirebaseManager.OnTaskCompleteListener() {
                     @Override
                     public void onTaskSuccess(String message) {
@@ -132,7 +132,6 @@ public class DriverDetailFragment extends Fragment {
             }
         });
 
-        setActive(driver);
         setStatus(driver);
         nameTextView.setText(driver.getName());
         emailTextView.setText(driver.getEmail());
@@ -140,14 +139,6 @@ public class DriverDetailFragment extends Fragment {
         phoneTextView.setText(generatePhoneNumberForView(driver.getPhone()));
         licenseNumberTextView.setText(driver.getLicenseNumber());
         totalDriveTextView.setText(String.valueOf(driver.getTotalDrive()));
-    }
-
-    private void setActive(Driver driver) {
-        if (driver.isActive()) {
-            activeImageView.setImageResource(R.drawable.ic_active);
-        } else {
-            activeImageView.setImageResource(R.drawable.ic_deactive);
-        }
     }
 
     private void setStatus(Driver driver){

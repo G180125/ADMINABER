@@ -1,6 +1,9 @@
 package com.example.adminaber.Models.User;
 
+import androidx.annotation.NonNull;
+
 import com.example.adminaber.Models.Booking.Booking;
+import com.example.adminaber.Models.Staff.Driver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +20,13 @@ public class User {
     private List<Vehicle> vehicles;
     private List<SOS> emergencyContacts;
     private List<Booking> bookings;
+    private String stripeCusId;
+    private List<Driver>  chattedDriver;
+    private String fcmToken;
 
     public User(){};
 
-    public User(String email, String name, Gender gender, String phoneNumber, List<Home> homes, List<Vehicle> vehicles, List<SOS> emergencyContacts) {
+    public User(String email, String name, Gender gender, String phoneNumber, List<Home> homes, List<Vehicle> vehicles, List<SOS> emergencyContacts, String stripeCusId) {
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -30,6 +36,23 @@ public class User {
         this.vehicles = vehicles;
         this.emergencyContacts = emergencyContacts;
         this.bookings = new ArrayList<>();
+        this.stripeCusId = stripeCusId;
+        this.chattedDriver = new ArrayList<>();
+        this.fcmToken = "";
+    }
+
+    @NonNull
+    public User clone() {
+        User newUser = new User();
+        newUser.setName(this.getName());
+        newUser.setEmail(this.getEmail());
+        newUser.setPhoneNumber(this.phoneNumber);
+        newUser.setGender(this.gender);
+        newUser.setAvatar(this.avatar);
+        newUser.setHomes(this.homes);
+        newUser.setVehicles(this.vehicles);
+        newUser.setEmergencyContacts(this.emergencyContacts);
+        return newUser;
     }
 
     public String getEmail() {
@@ -104,12 +127,43 @@ public class User {
         this.emergencyContacts = emergencyContacts;
     }
 
+    public String getStripeCusId() {
+        return stripeCusId;
+    }
+
+    public void setStripeCusId(String stripeCusId) {
+        this.stripeCusId = stripeCusId;
+    }
+
+    public List<Driver> getChattedDriver() {
+        return chattedDriver;
+    }
+
+    public void setChattedDriver(List<Driver> chattedDriver) {
+        this.chattedDriver = chattedDriver;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return email.equals(user.email) && name.equals(user.name) && gender == user.gender && phoneNumber.equals(user.phoneNumber) && avatar.equals(user.avatar) && homes.equals(user.homes) && vehicles.equals(user.vehicles) && emergencyContacts.equals(user.emergencyContacts);
+        return Objects.equals(email, user.email) &&
+                Objects.equals(name, user.name) &&
+                gender == user.gender &&
+                Objects.equals(phoneNumber, user.phoneNumber) &&
+                Objects.equals(avatar, user.avatar) &&
+                Objects.equals(homes, user.homes) &&
+                Objects.equals(vehicles, user.vehicles) &&
+                Objects.equals(emergencyContacts, user.emergencyContacts);
     }
 
     @Override
