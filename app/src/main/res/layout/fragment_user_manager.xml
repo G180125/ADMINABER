@@ -7,10 +7,8 @@
     tools:context=".Fragments.User.Manager.UserManagerFragment">
 
     <FrameLayout
-        android:id="@+id/fragment_main_manager_container"
+        android:id="@+id/fragment_user_manager_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" />
-
-
 </FrameLayout>

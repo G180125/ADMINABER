@@ -5,7 +5,9 @@ import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 
+import com.example.adminaber.Models.Booking.BookingResponse;
 import com.example.adminaber.Models.Message.MyMessage;
+import com.example.adminaber.Models.Staff.Driver;
 import com.example.adminaber.Models.User.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,8 +29,10 @@ import java.util.Objects;
 
 public class FirebaseManager {
     public final String COLLECTION_USERS = "users";
+    public final String COLLECTION_DRIVERS = "drivers";
     public final String COLLECTION_ADMINS = "admins";
     public final String COLLECTION_CHATS = "Chats";
+    public final String COLLECTION_BOOKINGS = "Bookings";
     public FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private StorageReference storageRef;
@@ -86,7 +90,7 @@ public class FirebaseManager {
     }
 
 
-    public void getUserByID(String userID, OnFetchUserListener listener) {
+    public void getUserByID(String userID, OnFetchListener<User> listener) {
         new Thread(() -> {
             this.firestore.collection(this.COLLECTION_USERS)
                     .document(userID)  // Use document() instead of whereEqualTo
@@ -96,12 +100,12 @@ public class FirebaseManager {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 User user = document.toObject(User.class);
-                                listener.onFetchUserSuccess(user);
+                                listener.onFetchSuccess(user);
                             } else {
-                                listener.onFetchUserFailure("User Data not found");
+                                listener.onFetchFailure("User Data not found");
                             }
                         } else {
-                            listener.onFetchUserFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                            listener.onFetchFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
                         }
                     });
         }).start();
@@ -178,19 +182,154 @@ public class FirebaseManager {
         });
     }
 
+    public void getAllPendingDriver(OnFetchDriverListListener listener){
+        List<Driver> list = new ArrayList<>();
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_DRIVERS)
+                    .whereEqualTo("permission", false)
+                    .whereEqualTo("status","Register Pending")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                Driver driver = document.toObject(Driver.class);
+                                list.add(driver);
+                            }
+                            listener.onFetchDriverListSuccess(list);
+                        } else {
+                            listener.onFetchDriverListFailure("Error fetching users: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void getAllDrivers(OnFetchDriverListListener listener){
+        List<Driver> list = new ArrayList<>();
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_DRIVERS)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                Driver driver = document.toObject(Driver.class);
+                                list.add(driver);
+                            }
+                            listener.onFetchDriverListSuccess(list);
+                        } else {
+                            listener.onFetchDriverListFailure("Error fetching users: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void getDriverByID(String driverID, OnFetchListener<Driver> listener) {
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_DRIVERS)
+                    .document(driverID)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Driver driver = document.toObject(Driver.class);
+                                listener.onFetchSuccess(driver);
+                            } else {
+                                listener.onFetchFailure("User Data not found");
+                            }
+                        } else {
+                            listener.onFetchFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void updateDriver(Driver driver, OnTaskCompleteListener listener){
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_DRIVERS)
+                    .document(driver.getDocumentID())
+                    .set(driver)
+                    .addOnSuccessListener(aVoid -> {
+                        listener.onTaskSuccess("Driver updated successfully");
+                    })
+                    .addOnFailureListener(e -> {
+                        listener.onTaskFailure("Error updating user: " + e.getMessage());
+                    });
+        }).start();
+    }
+
+    public void fetchBookings(OnFetchListListener<BookingResponse> listener){
+        List<BookingResponse> bookingResponseList = new ArrayList<>();
+
+        DatabaseReference reference =  this.database.getReference(COLLECTION_BOOKINGS);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                bookingResponseList.clear();
+                for (DataSnapshot s: snapshot.getChildren()){
+                    BookingResponse bookingResponse = s.getValue(BookingResponse.class);
+                    assert bookingResponse != null;
+                    bookingResponse.setId(s.getKey());
+                    if(bookingResponse.getDriverID() == null || bookingResponse.getDriverID().isEmpty()){
+                        bookingResponseList.add(bookingResponse);
+                    }
+                }
+                listener.onDataChanged(bookingResponseList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void fetchBookingById(String bookingId, OnFetchListener<BookingResponse> listener) {
+        DatabaseReference reference = this.database.getReference(COLLECTION_BOOKINGS);
+
+        reference.orderByChild("booking/id").equalTo(bookingId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            DataSnapshot bookingSnapshot = snapshot.getChildren().iterator().next();
+                            BookingResponse bookingResponse = bookingSnapshot.getValue(BookingResponse.class);
+
+                            if (bookingResponse != null) {
+                                bookingResponse.setId(bookingSnapshot.getKey());
+                                listener.onFetchSuccess(bookingResponse);
+                            } else {
+                                listener.onFetchFailure("BookingResponse is null");
+                            }
+                        } else {
+                            listener.onFetchFailure("Booking not found");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        listener.onFetchFailure(error.getMessage());
+                    }
+                });
+    }
+
     public interface OnTaskCompleteListener {
         void onTaskSuccess(String message);
         void onTaskFailure(String message);
     }
 
-    public interface OnFetchUserListener {
-        void onFetchUserSuccess(User user);
-        void onFetchUserFailure(String message);
+    public interface OnFetchListener<T> {
+        void onFetchSuccess(T object);
+        void onFetchFailure(String message);
     }
 
     public interface OnFetchUserListListener<K, V> {
         void onFetchUserListSuccess(Map<K, V> usersData);
         void onFetchUserListFailure(String errorMessage);
+    }
+
+    public interface OnFetchDriverListListener{
+        void onFetchDriverListSuccess(List<Driver> list);
+        void onFetchDriverListFailure(String message);
     }
 
     public interface OnRetrieveImageListener {
@@ -200,6 +339,10 @@ public class FirebaseManager {
 
     public interface OnReadingMessageListener{
         void OnMessageDataChanged(List<MyMessage> messageList);
+    }
+
+    public interface OnFetchListListener<T>{
+        void onDataChanged(List<T> object);
     }
 }
 

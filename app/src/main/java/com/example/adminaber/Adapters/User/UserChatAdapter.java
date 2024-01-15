@@ -1,4 +1,4 @@
-package com.example.adminaber.Adapters;
+package com.example.adminaber.Adapters.User;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -36,7 +36,7 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserVi
     @NonNull
     @Override
     public UserChatAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_chat_container, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_container, parent, false);
         return new UserChatAdapter.UserViewHolder(view);
     }
 
@@ -46,6 +46,8 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserVi
         if(user.getAvatar().isEmpty()){
             holder.bind(user, position, null);
             return;
+        } else {
+            holder.bind(user, position, null);
         }
         firebaseManager.retrieveImage(user.getAvatar(), new FirebaseManager.OnRetrieveImageListener() {
             @Override

@@ -1,4 +1,4 @@
-package com.example.adminaber.Adapters;
+package com.example.adminaber.Adapters.User;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;

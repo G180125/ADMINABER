@@ -6,11 +6,9 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -45,15 +43,15 @@ public class UserDetailFragment extends Fragment {
             userID = bundle.getString("userID");
         }
 
-        firebaseManager.getUserByID(userID, new FirebaseManager.OnFetchUserListener() {
+        firebaseManager.getUserByID(userID, new FirebaseManager.OnFetchListener<User>() {
             @Override
-            public void onFetchUserSuccess(User user) {
-                currentUser = user;
+            public void onFetchSuccess(User object) {
+                currentUser = object;
                 updateUI(currentUser);
             }
 
             @Override
-            public void onFetchUserFailure(String message) {
+            public void onFetchFailure(String message) {
                 hideLoadingDialog();
                 showToast(message);
             }
@@ -74,7 +72,7 @@ public class UserDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_main_manager_container, new UserManagerListFragment())
+                        .replace(R.id.fragment_user_manager_container, new UserManagerListFragment())
                         .addToBackStack(null)
                         .commit();
             }
@@ -109,8 +107,8 @@ public class UserDetailFragment extends Fragment {
         emailTextView.setText(user.getEmail());
         setGenderFromRadiusButton(user);
         phoneTextView.setText(user.getPhoneNumber());
-        addressTextView.setText(user.getHome().getAddress());
-        plateTextView.setText(user.getVehicle().getNumberPlate());
+        addressTextView.setText(user.getHomes().get(0).getAddress());
+        plateTextView.setText(user.getVehicles().get(0).getNumberPlate());
         if(!user.getEmergencyContacts().isEmpty()){
             sosTextView.setText(user.getEmergencyContacts().get(0).getName());
         }

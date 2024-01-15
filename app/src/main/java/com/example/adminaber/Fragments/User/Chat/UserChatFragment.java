@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.adminaber.Fragments.User.Manager.UserManagerListFragment;
 import com.example.adminaber.R;
 
 public class UserChatFragment extends Fragment {
@@ -21,7 +20,7 @@ public class UserChatFragment extends Fragment {
         UserChatListFragment fragment = new UserChatListFragment();
 
         getParentFragmentManager().beginTransaction()
-                .add(R.id.fragment_main_chat_container, fragment)
+                .add(R.id.fragment_user_chat_container, fragment)
                 .addToBackStack(null)
                 .commit();
 

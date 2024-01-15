@@ -20,7 +20,7 @@ public class UserManagerFragment extends Fragment {
         UserManagerListFragment fragment = new UserManagerListFragment();
 
         getParentFragmentManager().beginTransaction()
-                .add(R.id.fragment_main_manager_container, fragment)
+                .add(R.id.fragment_user_manager_container, fragment)
                 .addToBackStack(null)
                 .commit();
 

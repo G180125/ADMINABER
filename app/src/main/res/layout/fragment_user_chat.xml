@@ -6,7 +6,7 @@
     tools:context=".Fragments.User.Chat.UserChatFragment">
 
     <FrameLayout
-        android:id="@+id/fragment_main_chat_container"
+        android:id="@+id/fragment_user_chat_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" />
