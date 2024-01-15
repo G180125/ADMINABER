@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 
+import com.example.adminaber.Models.Booking.BookingResponse;
 import com.example.adminaber.Models.Message.MyMessage;
 import com.example.adminaber.Models.Staff.Driver;
 import com.example.adminaber.Models.User.User;
@@ -31,6 +32,7 @@ public class FirebaseManager {
     public final String COLLECTION_DRIVERS = "drivers";
     public final String COLLECTION_ADMINS = "admins";
     public final String COLLECTION_CHATS = "Chats";
+    public final String COLLECTION_BOOKINGS = "Bookings";
     public FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private StorageReference storageRef;
@@ -255,6 +257,61 @@ public class FirebaseManager {
         }).start();
     }
 
+    public void fetchBookings(OnFetchListListener<BookingResponse> listener){
+        List<BookingResponse> bookingResponseList = new ArrayList<>();
+
+        DatabaseReference reference =  this.database.getReference(COLLECTION_BOOKINGS);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                bookingResponseList.clear();
+                for (DataSnapshot s: snapshot.getChildren()){
+                    BookingResponse bookingResponse = s.getValue(BookingResponse.class);
+                    assert bookingResponse != null;
+                    bookingResponse.setId(s.getKey());
+                    if(bookingResponse.getDriverID() == null || bookingResponse.getDriverID().isEmpty()){
+                        bookingResponseList.add(bookingResponse);
+                    }
+                }
+                listener.onDataChanged(bookingResponseList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void fetchBookingById(String bookingId, OnFetchListener<BookingResponse> listener) {
+        DatabaseReference reference = this.database.getReference(COLLECTION_BOOKINGS);
+
+        reference.orderByChild("booking/id").equalTo(bookingId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            DataSnapshot bookingSnapshot = snapshot.getChildren().iterator().next();
+                            BookingResponse bookingResponse = bookingSnapshot.getValue(BookingResponse.class);
+
+                            if (bookingResponse != null) {
+                                bookingResponse.setId(bookingSnapshot.getKey());
+                                listener.onFetchSuccess(bookingResponse);
+                            } else {
+                                listener.onFetchFailure("BookingResponse is null");
+                            }
+                        } else {
+                            listener.onFetchFailure("Booking not found");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        listener.onFetchFailure(error.getMessage());
+                    }
+                });
+    }
+
     public interface OnTaskCompleteListener {
         void onTaskSuccess(String message);
         void onTaskFailure(String message);
@@ -282,6 +339,10 @@ public class FirebaseManager {
 
     public interface OnReadingMessageListener{
         void OnMessageDataChanged(List<MyMessage> messageList);
+    }
+
+    public interface OnFetchListListener<T>{
+        void onDataChanged(List<T> object);
     }
 }
 

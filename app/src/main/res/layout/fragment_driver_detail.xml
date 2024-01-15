@@ -40,13 +40,6 @@
                     android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:src="@drawable/ic_avatar"/>
-                <ImageView
-                    android:id="@+id/active"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_deactive"
-                    android:translationY="-40dp"
-                    android:translationX="40dp"/>
             </LinearLayout>
             <TextView
                 android:id="@+id/status"
@@ -256,7 +249,7 @@
                     android:id="@+id/deny_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/warning_red"
+                    android:backgroundTint="@color/red"
                     android:layout_weight="1"
                     android:text="Deny"
                     android:layout_marginLeft="16dp"/>
