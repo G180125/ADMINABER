@@ -20,9 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.example.adminaber.Adapters.Home.BookingAdapter;
+import com.example.adminaber.Fragments.Home.MainHomeFragment;
 import com.example.adminaber.Models.Booking.Booking;
 import com.example.adminaber.Models.Booking.BookingResponse;
 import com.example.adminaber.Models.User.User;
@@ -38,6 +40,8 @@ public class BookingListFragment extends Fragment implements BookingAdapter.Recy
     private BookingAdapter adapter;
     private User user;
     private String userID;
+
+    private ImageView buttonBack;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,6 +69,20 @@ public class BookingListFragment extends Fragment implements BookingAdapter.Recy
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new BookingAdapter(new ArrayList<>(),this);
         recyclerView.setAdapter(adapter);
+
+        buttonBack = root.findViewById(R.id.back);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                fragmentTransaction.replace(R.id.fragment_main_container, new MainHomeFragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
 
         return root;
     }

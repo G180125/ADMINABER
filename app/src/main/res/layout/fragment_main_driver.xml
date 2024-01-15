@@ -16,10 +16,14 @@
             android:id="@+id/driver_tab_layout"
             app:tabMode="fixed"
             app:tabGravity="fill"
-            app:tabIndicatorGravity="stretch"
+            android:background="@color/white"
+            app:tabIndicatorGravity = "stretch"
             app:tabSelectedTextColor="@color/white"
             app:tabIndicatorAnimationMode="elastic"
-            app:tabIndicatorColor="@color/pale_blue" />
+            app:tabIndicatorColor="@color/pale_blue"
+            app:tabIndicator="@null"
+            app:tabIndicatorFullWidth="true"
+            app:tabRippleColor="@color/white_smoke"/>
 
         <androidx.viewpager2.widget.ViewPager2
             android:layout_width="match_parent"

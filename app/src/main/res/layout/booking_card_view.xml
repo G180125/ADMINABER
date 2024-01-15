@@ -32,7 +32,7 @@
                 android:padding="8dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Status"
+                android:text="@string/status"
                 android:textColor="@color/red"
                 android:textSize="20sp"/>
             <TextView
@@ -66,7 +66,7 @@
                 android:padding="8dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Pick Up: "
+                android:text="@string/pick_up_header"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -81,7 +81,7 @@
                 android:scrollHorizontally="true"
                 android:focusable="true"
                 android:singleLine="true"
-                android:text="Pick Up"
+                android:text="@string/pick_up"
                 android:textSize="20sp"
                 android:focusableInTouchMode="true"/>
         </LinearLayout>
@@ -99,7 +99,7 @@
                 android:padding="8dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Destination: "
+                android:text="@string/destination_header"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -114,7 +114,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:focusable="true"
-                android:text="Destination"
+                android:text="@string/destination"
                 android:textSize="20sp"/>
         </LinearLayout>
         <LinearLayout
@@ -138,7 +138,7 @@
                     android:padding="8dp"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="Vehicle: "
+                    android:text="@string/vehicle_header"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -153,7 +153,7 @@
                     android:padding="8dp"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="Vehicle"
+                    android:text="@string/vehicle"
                     android:textSize="20sp"/>
             </LinearLayout>
 
@@ -171,7 +171,7 @@
                 android:layout_weight="1"
                 android:layout_marginRight="8dp"
                 android:layout_marginLeft="10dp"
-                android:text="View Detail"
+                android:text="@string/view_detail"
                 android:backgroundTint="@color/pale_blue"/>
 
         </LinearLayout>
