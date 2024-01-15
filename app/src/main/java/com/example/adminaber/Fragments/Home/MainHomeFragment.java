@@ -17,6 +17,8 @@ import com.example.adminaber.Activities.LoginActivity;
 import com.example.adminaber.BookingListFragment;
 import com.example.adminaber.FirebaseManager;
 import com.example.adminaber.Fragments.Home.Pending.HomePendingFragment;
+import com.example.adminaber.Fragments.Home.Settings.HomeSettingsFragment;
+import com.example.adminaber.Fragments.Home.Statistic.HomeStatisticFragment;
 import com.example.adminaber.R;
 import com.google.android.material.tabs.TabLayout;
 
@@ -63,6 +65,26 @@ public class MainHomeFragment extends Fragment {
                 firebaseManager.mAuth.signOut();
                 requireActivity().finish();
                 startActivity(new Intent(requireContext(), LoginActivity.class));
+            }
+        });
+
+        staticCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_main_container, new HomeStatisticFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        settingCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_main_container, new HomeSettingsFragment())
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
