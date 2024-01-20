@@ -39,23 +39,45 @@
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
+        <androidx.viewpager.widget.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:id="@+id/view_pager"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|bottom">
+            >
+            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                android:id="@+id/worm_dots_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:dotsColor="@color/pale_blue"
+                app:dotsStrokeColor="@color/pale_blue"
+                app:dotsCornerRadius="8dp"
+                app:dotsSize="16dp"
+                app:dotsSpacing="4dp"
+                app:dotsStrokeWidth="2dp"
+                android:layout_marginBottom="100dp"
+
+                />
+        </LinearLayout>
+
+
 
 
 
 
 
     </LinearLayout>
-    <com.anychart.AnyChartView
-        android:id="@+id/pie_chart_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-
 <!--    <com.anychart.AnyChartView-->
 <!--        android:id="@+id/column_chart_view"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="wrap_content"-->
 <!--        />-->
+
+
 
 </com.google.android.material.appbar.AppBarLayout>
