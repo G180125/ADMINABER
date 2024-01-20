@@ -1,6 +1,7 @@
 package com.example.adminaber.Fragments.Home.Pending;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -31,16 +34,18 @@ public class DriverDetailFragment extends Fragment {
     private Driver driver;
     private CircleImageView avatar;
     private ImageView backImageView, activeImageView;
-    private TextView statusTextView, nameTextView, emailTextView, phoneTextView, licenseNumberTextView, totalDriveTextView;
+    private TextView statusTextView, nameTextView, emailTextView, phoneTextView, licenseNumberTextView, avatarDateTextView;
     private RadioButton maleRadioButton, femaleRadiusButton;
-    private Button confirmButton, denyButton;
+    private PopupWindow popupWindow;
+    private Button confirmButton, banButton;
+    private View root;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         progressDialog = new ProgressDialog(requireContext());
         AndroidUtil.showLoadingDialog(progressDialog);
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_driver_detail, container, false);
+        root = inflater.inflate(R.layout.fragment_driver_detail, container, false);
         firebaseManager = new FirebaseManager();
 
         Bundle bundle = getArguments();
@@ -71,9 +76,9 @@ public class DriverDetailFragment extends Fragment {
         femaleRadiusButton = root.findViewById(R.id.radioButtonFemale);
         phoneTextView = root.findViewById(R.id.phone_number);
         licenseNumberTextView = root.findViewById(R.id.license_number);
-        totalDriveTextView = root.findViewById(R.id.total_drive);
+        avatarDateTextView = root.findViewById(R.id.date);
         confirmButton = root.findViewById(R.id.confirm_button);
-        denyButton = root.findViewById(R.id.deny_button);
+        banButton = root.findViewById(R.id.ban_button);
 
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +119,67 @@ public class DriverDetailFragment extends Fragment {
             }
         });
 
+        banButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initPopupWindow();
+                popupWindow.showAsDropDown(root, 0, 0);
+            }
+        });
+
         return root;
+    }
+
+    public void initPopupWindow() {
+        LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.pop_up_ban, null);
+
+        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+        popupWindow.setTouchable(true);
+        // Set the background color with alpha transparency
+        popupView.setBackgroundColor(getResources().getColor(R.color.popup_background, null));
+
+        EditText reasonEditText = popupView.findViewById(R.id.reason_edit_text);
+        Button submitButton = popupView.findViewById(R.id.submitNewSOSBtn);
+        ImageView cancelBtn = popupView.findViewById(R.id.cancelBtn);
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidUtil.showLoadingDialog(progressDialog);
+                String status = reasonEditText.getText().toString();
+
+                driver.setPermission(false);
+                driver.setStatus(status);
+
+                firebaseManager.updateDriver(driver, new FirebaseManager.OnTaskCompleteListener() {
+                    @Override
+                    public void onTaskSuccess(String message) {
+                        AndroidUtil.showToast(requireContext(),"Successfully ban the driver");
+                        AndroidUtil.hideLoadingDialog(progressDialog);
+                        updateUI(driver);
+                        // Dismiss the PopupWindow after updating
+                        popupWindow.dismiss();
+                    }
+
+                    @Override
+                    public void onTaskFailure(String message) {
+                        AndroidUtil.showToast(requireContext(),message);
+                        AndroidUtil.hideLoadingDialog(progressDialog);
+                    }
+                });
+            }
+        });
+
+        popupWindow.showAsDropDown(root, 0, 0);
+
     }
 
     private void updateUI(Driver driver){
@@ -138,7 +203,7 @@ public class DriverDetailFragment extends Fragment {
         setGenderFromRadiusButton(driver);
         phoneTextView.setText(generatePhoneNumberForView(driver.getPhone()));
         licenseNumberTextView.setText(driver.getLicenseNumber());
-        totalDriveTextView.setText(String.valueOf(driver.getTotalDrive()));
+        avatarDateTextView.setText(driver.getAvatarUploadDate());
     }
 
     private void setStatus(Driver driver){

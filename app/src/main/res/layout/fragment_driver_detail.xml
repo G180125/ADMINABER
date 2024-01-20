@@ -208,7 +208,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Total Drive"
+                android:text="Avatar Date"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginHorizontal="16dp"
@@ -221,10 +221,10 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="16dp">
                 <TextView
-                    android:id="@+id/total_drive"
+                    android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Total Drive"
+                    android:hint="Avatar Date"
                     android:padding="8dp"
                     android:textSize="18sp"/>
             </androidx.cardview.widget.CardView>
@@ -246,12 +246,12 @@
                     android:layout_marginRight="16dp"/>
 
                 <Button
-                    android:id="@+id/deny_button"
+                    android:id="@+id/ban_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/red"
                     android:layout_weight="1"
-                    android:text="Deny"
+                    android:text="Ban"
                     android:layout_marginLeft="16dp"/>
             </LinearLayout>
         </LinearLayout>

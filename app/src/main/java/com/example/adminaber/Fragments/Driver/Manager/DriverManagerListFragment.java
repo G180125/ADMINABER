@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.example.adminaber.Adapters.Home.DriverPendingAdapter;
 import com.example.adminaber.FirebaseManager;
 import com.example.adminaber.Fragments.Home.Pending.DriverDetailFragment;
 import com.example.adminaber.Models.Staff.Driver;
+import com.example.adminaber.Models.User.User;
 import com.example.adminaber.R;
 import com.example.adminaber.Utils.AndroidUtil;
 
@@ -23,10 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverManagerListFragment extends Fragment implements DriverPendingAdapter.RecyclerViewClickListener{
-    private List<Driver> driverList;
+    private List<Driver> driverList, filteredList;
     private FirebaseManager firebaseManager;
     private ProgressDialog progressDialog;
     private DriverPendingAdapter adapter;
+    private SearchView searchView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,7 +58,48 @@ public class DriverManagerListFragment extends Fragment implements DriverPending
             }
         });
 
+        searchView = root.findViewById(R.id.search_view);
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.setIconified(false);
+                handleSearch();
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                queryUsers(newText);
+                return true;
+            }
+        });
+
         return root;
+    }
+
+    private void handleSearch() {
+        String query = searchView.getQuery().toString();
+        queryUsers(query);
+    }
+    private void queryUsers(String query) {
+        filteredList = new ArrayList<>();
+        if (driverList != null) {
+            for (Driver driver : driverList) {
+                if (driver.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(driver);
+                } else if (driver.getEmail().toLowerCase().contains(query.toLowerCase())){
+                    filteredList.add(driver);
+                }
+            }
+        }
+
+        updateUI(filteredList);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -67,7 +111,12 @@ public class DriverManagerListFragment extends Fragment implements DriverPending
 
     @Override
     public void onCardClick(int position) {
-        String id = driverList.get(position).getDocumentID();
+        String id;
+        if (filteredList == null || filteredList.isEmpty() || position >= filteredList.size()) {
+            id = driverList.get(position).getDocumentID();
+        } else {
+            id = filteredList.get(position).getDocumentID();
+        }
 
         if(id != null){
             DriverDetailFragment fragment = new DriverDetailFragment();

@@ -103,6 +103,7 @@
     <string name="view_detail">Chi Tiết</string>
     <string name="booking">Booking</string>
     <string name="pending">Đang chờ</string>
+    <string name="date" />
 
 
 </resources>

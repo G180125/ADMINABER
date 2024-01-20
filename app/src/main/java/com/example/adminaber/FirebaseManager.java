@@ -269,9 +269,7 @@ public class FirebaseManager {
                     BookingResponse bookingResponse = s.getValue(BookingResponse.class);
                     assert bookingResponse != null;
                     bookingResponse.setId(s.getKey());
-                    if(bookingResponse.getDriverID() == null || bookingResponse.getDriverID().isEmpty()){
-                        bookingResponseList.add(bookingResponse);
-                    }
+                    bookingResponseList.add(bookingResponse);
                 }
                 listener.onDataChanged(bookingResponseList);
             }
@@ -310,6 +308,56 @@ public class FirebaseManager {
                         listener.onFetchFailure(error.getMessage());
                     }
                 });
+    }
+
+    public void getBookingsByStatus(String status, OnFetchListListener<BookingResponse> listener){
+        List<BookingResponse> bookingResponseList = new ArrayList<>();
+
+        DatabaseReference reference =  this.database.getReference(COLLECTION_BOOKINGS);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                bookingResponseList.clear();
+                for (DataSnapshot s: snapshot.getChildren()){
+                    BookingResponse bookingResponse = s.getValue(BookingResponse.class);
+                    assert bookingResponse != null;
+                    bookingResponse.setId(s.getKey());
+                    bookingResponseList.add(bookingResponse);
+                }
+                listener.onDataChanged(bookingResponseList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getBookingByDate(String date, OnFetchListListener<BookingResponse> listener){
+        List<BookingResponse> bookingResponseList = new ArrayList<>();
+
+        DatabaseReference reference =  this.database.getReference(COLLECTION_BOOKINGS);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                bookingResponseList.clear();
+                for (DataSnapshot s: snapshot.getChildren()){
+                    BookingResponse bookingResponse = s.getValue(BookingResponse.class);
+                    assert bookingResponse != null;
+                    bookingResponse.setId(s.getKey());
+                    if(bookingResponse.getBooking().getBookingDate().equals(date)){
+                        bookingResponseList.add(bookingResponse);
+                    }
+                }
+                listener.onDataChanged(bookingResponseList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     public interface OnTaskCompleteListener {

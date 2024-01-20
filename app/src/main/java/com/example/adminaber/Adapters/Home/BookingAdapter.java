@@ -1,4 +1,5 @@
 package com.example.adminaber.Adapters.Home;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.example.adminaber.Models.Booking.Booking;
 import com.example.adminaber.R;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
     private List<Booking> bookingList;
@@ -45,7 +47,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
 
     public class BookingViewHolder extends RecyclerView.ViewHolder{
-        TextView pickUpTextView, destinationTextView, bookingTimeTextView, vehicleTextView, statusTextView;
+        TextView pickUpTextView, destinationTextView, bookingTimeTextView, vehicleTextView, statusTextView, dateTextView;
         Button viewButton, cancelButton;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -54,6 +56,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             bookingTimeTextView = itemView.findViewById(R.id.booking_time);
             vehicleTextView = itemView.findViewById(R.id.vehicle);
             statusTextView = itemView.findViewById(R.id.status);
+            dateTextView = itemView.findViewById(R.id.date);
             viewButton = itemView.findViewById(R.id.view_button);
 
             viewButton.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +73,21 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             destinationTextView.setText(booking.getDestination().getAddress());
             bookingTimeTextView.setText(booking.getBookingTime());
             vehicleTextView.setText(booking.getVehicle().getNumberPlate());
+            dateTextView.setText(booking.getBookingDate());
             statusTextView.setText(booking.getStatus());
+
+            if(Objects.equals(booking.getStatus(), "Cancel")){
+                // Color red for cancel status
+                statusTextView.setTextColor(Color.parseColor("#FA3737"));
+            } else if(Objects.equals(booking.getStatus(), "Picked Up")){
+                //Color orange for pick up status
+                statusTextView.setTextColor(Color.parseColor("#EC5109"));
+            } else if(Objects.equals(booking.getStatus(), "Pending")){
+                //Color yellow for Pending
+                statusTextView.setTextColor(Color.parseColor("#FFC107"));
+            } else if(Objects.equals(booking.getStatus(), "Done") || Objects.equals(booking.getStatus(), "Driver Accepted")){
+                statusTextView.setTextColor(Color.parseColor("#4CAF50"));
+            }
 
             pickUpTextView.setSelected(true);
             pickUpTextView.setFocusable(true);
