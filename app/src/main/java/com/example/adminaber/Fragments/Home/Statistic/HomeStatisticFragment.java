@@ -49,15 +49,67 @@ public class HomeStatisticFragment extends Fragment {
 
     private ImageView buttonBack;
     private FirebaseManager firebaseManager;
+    private int maleData,femaleData;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_statistic, container, false);  // Replace with your Fragment layout
 
-        AnyChartView pieChartView = view.findViewById(R.id.pie_chart_view);
+
 //        AnyChartView columnChartView = view.findViewById(R.id.column_chart_view);
         firebaseManager = new FirebaseManager();
-        firebaseManager.getAllUsersGender();
+        firebaseManager.getAllUsersGender(new FirebaseManager.OnFetchGenderCountsListener() {
+            @Override
+            public void onFetchSuccess(int maleCount, int femaleCount) {
+                maleData = maleCount;
+                femaleData = femaleCount;
+                Log.d("TestMale","Count : " + maleCount);
+
+                AnyChartView pieChartView = view.findViewById(R.id.pie_chart_view);
+
+                Pie pie = AnyChart.pie();
+
+                pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
+                    @Override
+                    public void onClick(Event event) {
+                        Toast.makeText(requireContext(), event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
+
+                pie.title(getString(R.string.pie_chart_title));
+
+                pie.labels().position("outside");
+
+                pie.legend().title().enabled(true);
+                pie.legend().title()
+                        .text(getString(R.string.genders))
+                        .padding(0d, 0d, 10d, 0d);
+
+                pie.legend()
+                        .position("center-bottom")
+                        .itemsLayout(LegendLayout.HORIZONTAL)
+                        .align(Align.CENTER);
+
+                pieChartView.setChart(pie);
+
+                List<DataEntry> data = new ArrayList<>();
+                data.add(new ValueDataEntry(getString(R.string.female), femaleData));
+                Log.d("TestMaleAfterFunc","Count : " + maleData);
+                data.add(new ValueDataEntry(getString(R.string.male), maleData));
+
+
+                pie.data(data);
+            }
+
+            @Override
+            public void onFetchFailure(String message) {
+
+            }
+        });
         buttonBack = view.findViewById(R.id.back);
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
@@ -72,39 +124,9 @@ public class HomeStatisticFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-        Pie pie = AnyChart.pie();
-
-        pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
-            @Override
-            public void onClick(Event event) {
-                Toast.makeText(requireContext(), event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
 
-        List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry(getString(R.string.female), 8));
-        data.add(new ValueDataEntry(getString(R.string.male), 20));
-
-
-        pie.data(data);
-
-        pie.title(getString(R.string.pie_chart_title));
-
-        pie.labels().position("outside");
-
-        pie.legend().title().enabled(true);
-        pie.legend().title()
-                .text(getString(R.string.genders))
-                .padding(0d, 0d, 10d, 0d);
-
-        pie.legend()
-                .position("center-bottom")
-                .itemsLayout(LegendLayout.HORIZONTAL)
-                .align(Align.CENTER);
-
-        pieChartView.setChart(pie);
 
         return view;
     }

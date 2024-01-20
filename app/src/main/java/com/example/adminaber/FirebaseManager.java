@@ -137,7 +137,7 @@ public class FirebaseManager {
         }).start();
     }
 
-    public void getAllUsersGender() {
+    public void getAllUsersGender(OnFetchGenderCountsListener listener) {
         userGender = new int[]{0, 0};
             this.getAllUsers(new OnFetchUserListListener<User, String>() {
                 @Override
@@ -155,12 +155,13 @@ public class FirebaseManager {
                         Log.d("Testing","Male : " + userGender[0]);
                         Log.d("Testing","Female : " + userGender[1]);
                     }
-
-
+                Log.d("Test","Count : " + userGender[0]);
+                listener.onFetchSuccess(userGender[0],userGender[1] );
                 }
 
                 @Override
                 public void onFetchUserListFailure(String message) {
+                    listener.onFetchFailure(message);
 
                 }
             });
@@ -362,7 +363,7 @@ public class FirebaseManager {
     }
 
     public interface OnFetchGenderCountsListener{
-        void onFetchSuccess(int maleCount);
+        void onFetchSuccess(int maleCount,int femaleCount);
         void onFetchFailure(String message);
     }
 
@@ -373,11 +374,6 @@ public class FirebaseManager {
 
     public interface OnFetchUserListListener<K, V> {
         void onFetchUserListSuccess(Map<K, V> usersData);
-        void onFetchUserListFailure(String errorMessage);
-    }
-
-    public interface OnFetchGenderListListener<K, V> {
-        int onFetchGenderListSuccess(Map<K, V> usersData);
         void onFetchUserListFailure(String errorMessage);
     }
 
