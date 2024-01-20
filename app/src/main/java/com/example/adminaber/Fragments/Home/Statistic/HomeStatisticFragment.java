@@ -1,10 +1,12 @@
 package com.example.adminaber.Fragments.Home.Statistic;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,16 +34,21 @@ import com.anychart.enums.Position;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Image;
 import com.anychart.graphics.vector.Stroke;
+import com.example.adminaber.FirebaseManager;
 import com.example.adminaber.Fragments.Home.MainHomeFragment;
+import com.example.adminaber.Models.User.User;
 import com.example.adminaber.R;
+import com.example.adminaber.Utils.AndroidUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class HomeStatisticFragment extends Fragment {
 
     private ImageView buttonBack;
+    private FirebaseManager firebaseManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +56,8 @@ public class HomeStatisticFragment extends Fragment {
 
         AnyChartView pieChartView = view.findViewById(R.id.pie_chart_view);
 //        AnyChartView columnChartView = view.findViewById(R.id.column_chart_view);
+        firebaseManager = new FirebaseManager();
+        firebaseManager.getAllUsersGender();
         buttonBack = view.findViewById(R.id.back);
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
@@ -72,9 +81,11 @@ public class HomeStatisticFragment extends Fragment {
             }
         });
 
+
+
         List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry(getString(R.string.female), 6371664));
-        data.add(new ValueDataEntry(getString(R.string.male), 789622));
+        data.add(new ValueDataEntry(getString(R.string.female), 8));
+        data.add(new ValueDataEntry(getString(R.string.male), 20));
 
 
         pie.data(data);
@@ -97,6 +108,7 @@ public class HomeStatisticFragment extends Fragment {
 
         return view;
     }
+
 
 }
 

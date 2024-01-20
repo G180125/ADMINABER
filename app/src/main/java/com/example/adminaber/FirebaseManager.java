@@ -2,13 +2,16 @@ package com.example.adminaber;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.adminaber.Models.Booking.BookingResponse;
 import com.example.adminaber.Models.Message.MyMessage;
 import com.example.adminaber.Models.Staff.Driver;
+import com.example.adminaber.Models.User.Gender;
 import com.example.adminaber.Models.User.User;
+import com.example.adminaber.Utils.AndroidUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FirebaseManager {
     public final String COLLECTION_USERS = "users";
@@ -37,6 +41,9 @@ public class FirebaseManager {
     private FirebaseFirestore firestore;
     private StorageReference storageRef;
     private FirebaseDatabase database;
+    private Map<User, String> userMap;
+    private int[] userGender;
+    private List<User> userList;
 
     public FirebaseManager() {
         mAuth = FirebaseAuth.getInstance();
@@ -129,6 +136,39 @@ public class FirebaseManager {
                     });
         }).start();
     }
+
+    public void getAllUsersGender() {
+        userGender = new int[]{0, 0};
+            this.getAllUsers(new OnFetchUserListListener<User, String>() {
+                @Override
+                public void onFetchUserListSuccess(Map<User, String> usersData) {
+                    userMap = usersData;
+                    Log.d("TEST","TEST : " + userMap);
+                    userList = new ArrayList<>(userMap.keySet());
+                    for (Map.Entry<User, String> entry : userMap.entrySet()) {
+                        if (entry.getKey().getGender() == Gender.MALE){
+                            userGender[0]++;
+                        }
+                        if (entry.getKey().getGender() == Gender.FEMALE){
+                            userGender[1]++;
+                        }
+                        Log.d("Testing","Male : " + userGender[0]);
+                        Log.d("Testing","Female : " + userGender[1]);
+                    }
+
+
+                }
+
+                @Override
+                public void onFetchUserListFailure(String message) {
+
+                }
+            });
+        ;
+
+    }
+
+
 
     public void retrieveImage(String path, OnRetrieveImageListener listener){
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -283,6 +323,10 @@ public class FirebaseManager {
         });
     }
 
+
+
+
+
     public void fetchBookingById(String bookingId, OnFetchListener<BookingResponse> listener) {
         DatabaseReference reference = this.database.getReference(COLLECTION_BOOKINGS);
 
@@ -317,6 +361,11 @@ public class FirebaseManager {
         void onTaskFailure(String message);
     }
 
+    public interface OnFetchGenderCountsListener{
+        void onFetchSuccess(int maleCount);
+        void onFetchFailure(String message);
+    }
+
     public interface OnFetchListener<T> {
         void onFetchSuccess(T object);
         void onFetchFailure(String message);
@@ -324,6 +373,11 @@ public class FirebaseManager {
 
     public interface OnFetchUserListListener<K, V> {
         void onFetchUserListSuccess(Map<K, V> usersData);
+        void onFetchUserListFailure(String errorMessage);
+    }
+
+    public interface OnFetchGenderListListener<K, V> {
+        int onFetchGenderListSuccess(Map<K, V> usersData);
         void onFetchUserListFailure(String errorMessage);
     }
 
