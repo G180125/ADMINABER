@@ -19,12 +19,14 @@ import com.example.adminaber.FirebaseManager;
 import com.example.adminaber.Fragments.Home.Pending.HomePendingFragment;
 import com.example.adminaber.Fragments.Home.Settings.HomeSettingsFragment;
 import com.example.adminaber.Fragments.Home.Statistic.HomeStatisticFragment;
+import com.example.adminaber.PolicyListFragment;
 import com.example.adminaber.R;
+import com.example.adminaber.UserPolicyFragment;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainHomeFragment extends Fragment {
     private FirebaseManager firebaseManager;
-    private CardView staticCardView, bookingCardView, pendingCardView, settingCardView, logoutCardView;
+    private CardView staticCardView, bookingCardView, policyCardView, pendingCardView, settingCardView, logoutCardView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,6 +37,7 @@ public class MainHomeFragment extends Fragment {
 
         staticCardView = root.findViewById(R.id.static_card);
         bookingCardView = root.findViewById(R.id.booking_card);
+        policyCardView = root.findViewById(R.id.policy_card);
         pendingCardView = root.findViewById(R.id.pending_card);
         settingCardView = root.findViewById(R.id.setting_card);
         logoutCardView = root.findViewById(R.id.logout_card);
@@ -54,6 +57,16 @@ public class MainHomeFragment extends Fragment {
             public void onClick(View v) {
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_main_container, new HomePendingFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        policyCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_main_container, new PolicyListFragment())
                         .addToBackStack(null)
                         .commit();
             }
