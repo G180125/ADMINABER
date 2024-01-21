@@ -7,7 +7,10 @@ import androidx.annotation.NonNull;
 
 import com.example.adminaber.Models.Booking.BookingResponse;
 import com.example.adminaber.Models.Message.MyMessage;
+import com.example.adminaber.Models.Staff.Admin;
 import com.example.adminaber.Models.Staff.Driver;
+import com.example.adminaber.Models.Staff.DriverPolicy;
+import com.example.adminaber.Models.Staff.UserPolicy;
 import com.example.adminaber.Models.User.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -87,6 +90,86 @@ public class FirebaseManager {
                         listener.onTaskFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
                     }
                 });
+    }
+
+    public void fetchUserPolicy(String adminID, OnFetchListener<UserPolicy> listener){
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)  // Use document() instead of whereEqualTo
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Admin admin = document.toObject(Admin.class);
+                                assert admin != null;
+                                listener.onFetchSuccess(admin.getUserPolicy());
+                            } else {
+                                listener.onFetchFailure("Admin Data not found");
+                            }
+                        } else {
+                            listener.onFetchFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void updateUserPolicy(String adminID, UserPolicy userPolicy, OnTaskCompleteListener listener) {
+        new Thread(() -> {
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("userPolicy", userPolicy); // Assuming "userPolicy" is the field in Admin's document
+
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)
+                    .update(updateData)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listener.onTaskSuccess("Update User Policy Successfully");
+                        } else {
+                            listener.onTaskFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void updateDriverPolicy(String adminID, DriverPolicy driverPolicy, OnTaskCompleteListener listener) {
+        new Thread(() -> {
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("driverPolicy", driverPolicy); // Assuming "userPolicy" is the field in Admin's document
+
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)
+                    .update(updateData)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listener.onTaskSuccess("Update Driver Policy Successfully");
+                        } else {
+                            listener.onTaskFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void fetchDriverPolicy(String adminID, OnFetchListener<DriverPolicy> listener){
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)  // Use document() instead of whereEqualTo
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Admin admin = document.toObject(Admin.class);
+                                assert admin != null;
+                                listener.onFetchSuccess(admin.getDriverPolicy());
+                            } else {
+                                listener.onFetchFailure("Admin Data not found");
+                            }
+                        } else {
+                            listener.onFetchFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
     }
 
 

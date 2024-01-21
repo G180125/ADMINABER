@@ -99,5 +99,5 @@
     <string name="destination">Destination</string>
     <string name="vehicle_header">Vehicle:</string>
     <string name="view_detail">View Detail</string>
-    <string name="date" >Date</string>
+    <string name="date">Date</string>
 </resources>
