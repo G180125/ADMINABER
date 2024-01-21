@@ -8,10 +8,12 @@ import androidx.annotation.NonNull;
 
 import com.example.adminaber.Models.Booking.BookingResponse;
 import com.example.adminaber.Models.Message.MyMessage;
+import com.example.adminaber.Models.Staff.Admin;
 import com.example.adminaber.Models.Staff.Driver;
+import com.example.adminaber.Models.Staff.DriverPolicy;
+import com.example.adminaber.Models.Staff.UserPolicy;
 import com.example.adminaber.Models.User.Gender;
 import com.example.adminaber.Models.User.User;
-import com.example.adminaber.Utils.AndroidUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class FirebaseManager {
     public final String COLLECTION_USERS = "users";
@@ -96,6 +97,117 @@ public class FirebaseManager {
                 });
     }
 
+    public void fetchUserPolicy(String adminID, OnFetchListener<UserPolicy> listener){
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)  // Use document() instead of whereEqualTo
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Admin admin = document.toObject(Admin.class);
+                                assert admin != null;
+                                listener.onFetchSuccess(admin.getUserPolicy());
+                            } else {
+                                listener.onFetchFailure("Admin Data not found");
+                            }
+                        } else {
+                            listener.onFetchFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void updateUserPolicy(String adminID, UserPolicy userPolicy, OnTaskCompleteListener listener) {
+        new Thread(() -> {
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("userPolicy", userPolicy); // Assuming "userPolicy" is the field in Admin's document
+
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)
+                    .update(updateData)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listener.onTaskSuccess("Update User Policy Successfully");
+                        } else {
+                            listener.onTaskFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void getAllUsersGender(OnFetchGenderCountsListener listener) {
+        userGender = new int[]{0, 0};
+        this.getAllUsers(new OnFetchUserListListener<User, String>() {
+            @Override
+            public void onFetchUserListSuccess(Map<User, String> usersData) {
+                userMap = usersData;
+                Log.d("TEST","TEST : " + userMap);
+                userList = new ArrayList<>(userMap.keySet());
+                for (Map.Entry<User, String> entry : userMap.entrySet()) {
+                    if (entry.getKey().getGender() == Gender.MALE){
+                        userGender[0]++;
+                    }
+                    if (entry.getKey().getGender() == Gender.FEMALE){
+                        userGender[1]++;
+                    }
+                    Log.d("Testing","Male : " + userGender[0]);
+                    Log.d("Testing","Female : " + userGender[1]);
+                }
+                Log.d("Test","Count : " + userGender[0]);
+                listener.onFetchSuccess(userGender[0],userGender[1] );
+            }
+
+            @Override
+            public void onFetchUserListFailure(String message) {
+                listener.onFetchFailure(message);
+
+            }
+        });
+        ;
+
+    }
+
+    public void updateDriverPolicy(String adminID, DriverPolicy driverPolicy, OnTaskCompleteListener listener) {
+        new Thread(() -> {
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("driverPolicy", driverPolicy); // Assuming "userPolicy" is the field in Admin's document
+
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)
+                    .update(updateData)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listener.onTaskSuccess("Update Driver Policy Successfully");
+                        } else {
+                            listener.onTaskFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
+
+    public void fetchDriverPolicy(String adminID, OnFetchListener<DriverPolicy> listener){
+        new Thread(() -> {
+            this.firestore.collection(this.COLLECTION_ADMINS)
+                    .document(adminID)  // Use document() instead of whereEqualTo
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Admin admin = document.toObject(Admin.class);
+                                assert admin != null;
+                                listener.onFetchSuccess(admin.getDriverPolicy());
+                            } else {
+                                listener.onFetchFailure("Admin Data not found");
+                            }
+                        } else {
+                            listener.onFetchFailure("Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                        }
+                    });
+        }).start();
+    }
 
     public void getUserByID(String userID, OnFetchListener<User> listener) {
         new Thread(() -> {
@@ -136,40 +248,6 @@ public class FirebaseManager {
                     });
         }).start();
     }
-
-    public void getAllUsersGender(OnFetchGenderCountsListener listener) {
-        userGender = new int[]{0, 0};
-            this.getAllUsers(new OnFetchUserListListener<User, String>() {
-                @Override
-                public void onFetchUserListSuccess(Map<User, String> usersData) {
-                    userMap = usersData;
-                    Log.d("TEST","TEST : " + userMap);
-                    userList = new ArrayList<>(userMap.keySet());
-                    for (Map.Entry<User, String> entry : userMap.entrySet()) {
-                        if (entry.getKey().getGender() == Gender.MALE){
-                            userGender[0]++;
-                        }
-                        if (entry.getKey().getGender() == Gender.FEMALE){
-                            userGender[1]++;
-                        }
-                        Log.d("Testing","Male : " + userGender[0]);
-                        Log.d("Testing","Female : " + userGender[1]);
-                    }
-                Log.d("Test","Count : " + userGender[0]);
-                listener.onFetchSuccess(userGender[0],userGender[1] );
-                }
-
-                @Override
-                public void onFetchUserListFailure(String message) {
-                    listener.onFetchFailure(message);
-
-                }
-            });
-        ;
-
-    }
-
-
 
     public void retrieveImage(String path, OnRetrieveImageListener listener){
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -322,10 +400,6 @@ public class FirebaseManager {
         });
     }
 
-
-
-
-
     public void fetchBookingById(String bookingId, OnFetchListener<BookingResponse> listener) {
         DatabaseReference reference = this.database.getReference(COLLECTION_BOOKINGS);
 
@@ -410,11 +484,6 @@ public class FirebaseManager {
         void onTaskFailure(String message);
     }
 
-    public interface OnFetchGenderCountsListener{
-        void onFetchSuccess(int maleCount,int femaleCount);
-        void onFetchFailure(String message);
-    }
-
     public interface OnFetchListener<T> {
         void onFetchSuccess(T object);
         void onFetchFailure(String message);
@@ -441,6 +510,11 @@ public class FirebaseManager {
 
     public interface OnFetchListListener<T>{
         void onDataChanged(List<T> object);
+    }
+
+    public interface OnFetchGenderCountsListener{
+        void onFetchSuccess(int maleCount,int femaleCount);
+        void onFetchFailure(String message);
     }
 }
 
