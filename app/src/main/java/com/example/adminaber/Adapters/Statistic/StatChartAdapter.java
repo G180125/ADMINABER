@@ -15,9 +15,14 @@ public class StatChartAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // Return a PieChartFragment instance for each page
-        return new GenderChartFragment();
+        switch (position){
+            case 0:
+                return new BookingChartFragment();
+            case 1:
+                return new GenderChartFragment();
+        }
 
+        return null;
     }
 
     @Override

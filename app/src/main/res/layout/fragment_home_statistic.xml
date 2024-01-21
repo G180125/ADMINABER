@@ -41,7 +41,7 @@
         </androidx.appcompat.widget.Toolbar>
         <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="600dp"
             android:id="@+id/view_pager"/>
 
 
@@ -60,8 +60,6 @@
                 app:dotsSize="16dp"
                 app:dotsSpacing="4dp"
                 app:dotsStrokeWidth="2dp"
-                android:layout_marginBottom="100dp"
-
                 />
         </LinearLayout>
 
