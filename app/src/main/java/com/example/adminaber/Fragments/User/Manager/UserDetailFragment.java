@@ -4,11 +4,14 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -18,6 +21,9 @@ import com.example.adminaber.FirebaseManager;
 import com.example.adminaber.Models.User.Gender;
 import com.example.adminaber.Models.User.User;
 import com.example.adminaber.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,6 +36,9 @@ public class UserDetailFragment extends Fragment {
     private ImageView backImageView;
     private RadioButton maleRadioButton, femaleRadiusButton;
     private CircleImageView avatar;
+    private Button editButton;
+
+    private FirebaseAuth auth;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,6 +51,8 @@ public class UserDetailFragment extends Fragment {
         if (bundle != null) {
             userID = bundle.getString("userID");
         }
+
+        auth = FirebaseAuth.getInstance();
 
         firebaseManager.getUserByID(userID, new FirebaseManager.OnFetchListener<User>() {
             @Override
@@ -61,6 +72,7 @@ public class UserDetailFragment extends Fragment {
         avatar = root.findViewById(R.id.avatar);
         nameTextView = root.findViewById(R.id.name);
         emailTextView = root.findViewById(R.id.email);
+        editButton = root.findViewById(R.id.edit_button);
         maleRadioButton = root.findViewById(R.id.radioButtonMale);
         femaleRadiusButton = root.findViewById(R.id.radioButtonFemale);
         phoneTextView = root.findViewById(R.id.phone);
@@ -75,6 +87,25 @@ public class UserDetailFragment extends Fragment {
                         .replace(R.id.fragment_user_manager_container, new UserManagerListFragment())
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String emailAddress = emailTextView.getText().toString();
+                Log.d("Forget Password","User : " + emailAddress);
+                auth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(requireContext(), "Email sent", Toast.LENGTH_SHORT).show();
+                                    Log.d("Forget Password", "Email sent.");
+                                }
+                            }
+                        });
+
             }
         });
 
