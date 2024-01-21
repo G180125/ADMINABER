@@ -44,6 +44,8 @@ dependencies {
     implementation ("com.etebarian:meow-bottom-navigation:1.2.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.github.AnyChart:AnyChart-Android:1.1.5")
+    //Phone Number Layout
+    implementation ("com.fredporciuncula:phonemoji:1.5.2")
 
     //Dot progress bar
     implementation ("com.agrawalsuneet.androidlibs:dotsloader:1.4")

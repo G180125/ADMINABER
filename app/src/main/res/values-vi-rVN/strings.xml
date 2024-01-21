@@ -104,6 +104,8 @@
     <string name="booking">Booking</string>
     <string name="pending">Đang chờ</string>
     <string name="date" />
+    <string name="stat_booking_heading">Number Of Booking By Date</string>
+    <string name="avatar_date">Avatar Date</string>
 
 
 </resources>

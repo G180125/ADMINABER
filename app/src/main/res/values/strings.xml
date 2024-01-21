@@ -99,5 +99,9 @@
     <string name="destination">Destination</string>
     <string name="vehicle_header">Vehicle:</string>
     <string name="view_detail">View Detail</string>
+    <string name="date" >Date</string>
+    <string name="stat_booking_heading">Number Of Booking By Date</string>
+    <string name="license_number">License Number</string>
+    <string name="avatar_date">Avatar Date</string>
     <string name="date">Date</string>
 </resources>
